@@ -1,0 +1,24 @@
+name: zwis library workflow
+
+on:
+  push: 
+    branches:
+      - main 
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Go 
+        uses: actions/checkout@v2 
+        with: 
+          go-version: '1.21'
+      - name: Install dependencies 
+        run: |
+          go version
+          go install -v ./...
+          
+      - name: Run Tests 
+        run: |
+          go test -v ./tests/...
