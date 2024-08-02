@@ -8,7 +8,7 @@ import (
 
 type item struct {
 	value      interface{}
-	expiration int64
+	expiration time.Time
 }
 
 type MemoryCache struct {
@@ -31,7 +31,7 @@ func (c *MemoryCache) Get(ctx context.Context, key string) (interface{}, bool) {
 		return nil, false
 	}
 
-	if item.expiration > 0 && item.expiration < time.Now().UnixNano() {
+	if !item.expiration.IsZero() && item.expiration.Before(time.Now()) {
 		return nil, false
 	}
 
@@ -42,9 +42,9 @@ func (c *MemoryCache) Set(ctx context.Context, key string, value interface{}, tt
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	var expiration int64
+	var expiration time.Time
 	if ttl > 0 {
-		expiration = time.Now().Add(ttl).UnixNano()
+		expiration = time.Now().Add(ttl)
 	}
 
 	c.items[key] = item{
