@@ -122,7 +122,7 @@ func (c *ARCCache) Delete(ctx context.Context, key string) error {
 }
 
 // Clear removes all items from the cache.
-func (c *ARCCache) Clear(ctx context.Context) error {
+func (c *ARCCache) Flush(ctx context.Context) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

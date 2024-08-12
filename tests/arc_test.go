@@ -49,7 +49,7 @@ func TestARCCache(t *testing.T) {
 
 	// Test Clear
 	cache.Set(ctx, "key7", "value7", 0)
-	cache.Clear(ctx)
+	cache.Flush(ctx)
 	if _, ok := cache.Get(ctx, "key7"); ok {
 		t.Error("Cache should be empty after Clear")
 	}

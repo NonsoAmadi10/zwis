@@ -63,7 +63,7 @@ func (c *MemoryCache) Delete(ctx context.Context, key string) error {
 	return nil
 }
 
-func (c *MemoryCache) Clear(ctx context.Context) error {
+func (c *MemoryCache) Flush(ctx context.Context) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 

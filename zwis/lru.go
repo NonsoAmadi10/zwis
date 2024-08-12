@@ -28,7 +28,7 @@ func NewLRUCache(capacity int) *LRUCache {
 	}
 }
 
-func (lru *LRUCache) Get(ctx context.Context, key interface{}) (interface{}, bool) {
+func (lru *LRUCache) Get(ctx context.Context, key string) (interface{}, bool) {
 	lru.mutex.RLock()
 	elem, ok := lru.cache[key]
 	lru.mutex.RUnlock()
@@ -50,7 +50,7 @@ func (lru *LRUCache) Get(ctx context.Context, key interface{}) (interface{}, boo
 	return entry.value, true
 }
 
-func (lru *LRUCache) Set(ctx context.Context, key, value interface{}, ttl time.Duration) {
+func (lru *LRUCache) Set(ctx context.Context, key string, value interface{}, ttl time.Duration) error {
 	lru.mutex.Lock()
 	defer lru.mutex.Unlock()
 
@@ -70,23 +70,29 @@ func (lru *LRUCache) Set(ctx context.Context, key, value interface{}, ttl time.D
 		elem := lru.list.PushFront(&entry{key, value, expiration})
 		lru.cache[key] = elem
 	}
+
+	return nil
 }
 
-func (lru *LRUCache) Delete(ctx context.Context, key interface{}) {
+func (lru *LRUCache) Delete(ctx context.Context, key string) error {
 	lru.mutex.Lock()
 	defer lru.mutex.Unlock()
 
 	if elem, ok := lru.cache[key]; ok {
 		lru.removeElement(elem)
 	}
+
+	return nil
 }
 
-func (lru *LRUCache) Clear(ctx context.Context) {
+func (lru *LRUCache) Flush(ctx context.Context) error {
 	lru.mutex.Lock()
 	defer lru.mutex.Unlock()
 
 	lru.list.Init()
 	lru.cache = make(map[interface{}]*list.Element)
+
+	return nil
 }
 
 func (lru *LRUCache) removeOldest() {
